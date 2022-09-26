@@ -16,8 +16,8 @@ static int smartgaps          = 0;        /* 1 means no outer gap when there is 
 static int showbar            = 1;        /* 0 means no bar */
 static int topbar             = 1;        /* 0 means bottom bar */
 static int user_bh            = 0;        /* 0 means dwm will calculate, else user selected */
-static char font[]            = { "Ubuntu Nerd Font:size=12:autohint=true:antialias:true" };
-static char dmenufont[]       = "Ubuntu Nerd Font:size=12:autohint=true:antialias:true";
+static char font[]            = { "Ubuntu Nerd Font Complete:size=12:autohint=true:antialias:true" };
+static char dmenufont[]       = "Ubuntu Nerd Font Complete:size=12:autohint=true:antialias:true";
 static const char *fonts[]    = { font };
 static char normbgcolor[]     = "#ff0000";
 static char normbordercolor[] = "#444444";
@@ -81,6 +81,8 @@ static const Rule rules[] = {
 	{ NULL,	     "spterm",	  NULL,       SPTAG(0),     0,          1,	   1,	       0,	     -1 },
 	{ NULL,      "spfm",      NULL,	      SPTAG(1),     0,          1,	   0, 	       0,	     -1 },
 	{ NULL,      "keepassxc", NULL,	      SPTAG(2),     0,          0,         0,          0,            -1 },
+	{ NULL, NULL, "Android Emulator - emu1:5554",	    0,            1,          1,         0,          1,            -1 },
+	{ NULL, NULL, "Emulator",	    0,            1,          1,         0,          1,            -1 },
 };
 
 /* layout(s) */
