@@ -2086,11 +2086,11 @@ setup(void)
 	/* EWMH support per view */
 	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
 		PropModeReplace, (unsigned char *) netatom, NetLast);
+    /* set EWMH NUMBER_OF_DESKTOPS */
+    setnumbdesktops();
+    /* initialize EWMH CURRENT_DESKTOP */
+    setcurrentdesktop();
 	XDeleteProperty(dpy, root, netatom[NetClientList]);
-        /* set EWMH NUMBER_OF_DESKTOPS */
-        setnumbdesktops();
-        /* initialize EWMH CURRENT_DESKTOP */
-        setcurrentdesktop();
 	/* select events */
 	wa.cursor = cursor[CurNormal]->cursor;
 	wa.event_mask = SubstructureRedirectMask|SubstructureNotifyMask
@@ -2218,7 +2218,6 @@ tag(const Arg *arg)
 		focus(NULL);
 		arrange(selmon);
 	}
-        updatecurrenddesktop();
 }
 
 void
@@ -2297,7 +2296,6 @@ togglefloating(const Arg *arg)
 		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
 			selmon->sel->w, selmon->sel->h, 0);
 	arrange(selmon);
-        updatecurrenddesktop();
 }
 
 void
@@ -2382,6 +2380,7 @@ toggleview(const Arg *arg)
 		focus(NULL);
 		arrange(selmon);
 	}
+    updatecurrenddesktop();
 }
 
 void
@@ -2923,6 +2922,7 @@ view(const Arg *arg)
 
 	focus(NULL);
 	arrange(selmon);
+    updatecurrenddesktop();
 }
 
 pid_t
