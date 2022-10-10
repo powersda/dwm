@@ -99,7 +99,7 @@ enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
 enum { Manager, Xembed, XembedInfo, XLast }; /* Xembed atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
-       ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
+       ClkClientWin, ClkRootWin, ClkFollowSymbol, ClkLast }; /* clicks */
 
 typedef union {
 	int i;
@@ -151,6 +151,7 @@ typedef struct {
 typedef struct Pertag Pertag;
 struct Monitor {
 	char ltsymbol[16];
+	char wfsymbol[2];
 	float mfact;
 	int nmaster;
 	int num;
@@ -295,6 +296,7 @@ static void togglebar(const Arg *arg);
 static void togglefakefullscreen(const Arg *arg);
 static void togglefullscr(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglefollow(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
@@ -615,6 +617,8 @@ buttonpress(XEvent *e)
                         arg.ui = 1 << i;
                 } else if (ev->x < ble)
                         click = ClkLtSymbol;
+                else if (ev->x < x + blw + TEXTW(selmon->wfsymbol))
+                        click = ClkFollowSymbol;
                 else if (ev->x < wsbar - wstext)
                         click = ClkWinTitle;
                 else if ((x = wsbar - RSPAD - ev->x) > 0 && (x -= wstext - LSPAD - RSPAD) <= 0) {
@@ -879,6 +883,8 @@ createmon(void)
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
+	m->wfsymbol[0] = WFDEFAULT;
+	m->wfsymbol[1] = '\0';
 	m->pertag = ecalloc(1, sizeof(Pertag));
 	m->pertag->curtag = m->pertag->prevtag = 1;
 
@@ -1034,13 +1040,17 @@ drawbar(Monitor *m)
 	}
 	w = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
+
+ 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
+	w = TEXTW(m->wfsymbol);
+	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->wfsymbol, 0);
 
         if (m == selmon) {
                 blw = w, ble = x;
                 w = wbar - wstext - x;
         } else
                 w = wbar - x;
+
 
 	if (w > bh) {
 		if (m->sel) {
@@ -2218,6 +2228,8 @@ tag(const Arg *arg)
 		focus(NULL);
 		arrange(selmon);
 	}
+	if (selmon->wfsymbol[0] == WFACTIVE)
+		view(arg);
 }
 
 void
@@ -2226,6 +2238,8 @@ tagmon(const Arg *arg)
 	if (!selmon->sel || !mons->next)
 		return;
 	sendmon(selmon->sel, dirtomon(arg->i));
+	if (selmon->wfsymbol[0] == WFACTIVE)
+		focusmon(arg);
 }
 
 void
@@ -2282,6 +2296,13 @@ togglefakefullscreen(const Arg *arg)
 		c->isfullscreen = 0;
 	}
 	setfullscreen(c, !c->isfullscreen);
+}
+
+void
+togglefollow(const Arg *arg)
+{
+	selmon->wfsymbol[0] = (selmon->wfsymbol[0] == WFACTIVE) ? WFINACTIVE : WFACTIVE;
+	drawbars();
 }
 
 void

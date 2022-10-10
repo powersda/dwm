@@ -85,6 +85,11 @@ static const Rule rules[] = {
 	{ NULL, NULL, "Emulator",	    0,            1,          1,         0,          1,            -1 },
 };
 
+/* window following */
+#define WFACTIVE '>'
+#define WFINACTIVE 'v'
+#define WFDEFAULT WFACTIVE
+
 /* layout(s) */
 static float mfact     = 0.50; /* factor of master area size [0.05..0.95] */
 static int nmaster     = 1;    /* number of clients in master area */
@@ -188,6 +193,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
+	{ MODKEY,                       XK_w,      togglefollow,   {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
@@ -253,6 +259,7 @@ static Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
+	{ ClkFollowSymbol,      0,              Button1,        togglefollow,   {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button1,        sigdwmblocks,   {.i = 1} },
 	{ ClkStatusText,        0,              Button2,        sigdwmblocks,   {.i = 2} },
